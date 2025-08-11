@@ -99,7 +99,7 @@ public class ThreadPool implements Executor {
 
     public void pause() {
         isPaused.set(true);
-        Consumer<Void> pauser = (param) ->
+        Consumer<Void> pauser = (_) ->
                 addTaskToPool(Executors.callable(pauseTask, null),
                         ExtendedTasksPriority.FIRST);
 
@@ -120,7 +120,7 @@ public class ThreadPool implements Executor {
     public boolean awaitTermination(@Range(from = MIN_RANGE, to = MAX_RANGE) long timeout,
                                     @NotNull TimeUnit unit) throws InterruptedException {
         synchronized (awaitObject) {
-            Predicate<Void> condition = (param) -> {
+            Predicate<Void> condition = (_) -> {
                 boolean empty = false;
                 try {
                     empty = tasksQueue.isEmpty();
@@ -143,7 +143,7 @@ public class ThreadPool implements Executor {
     private void createThreads(int numOfThreads) {
         threadsCounter.set(threadsCounter.get() + numOfThreads);
 
-        Consumer<Void> threadsCreator = (param) ->{
+        Consumer<Void> threadsCreator = (_) ->{
             Thread thread = new TaskingThread();
             thread.start();
         };
@@ -262,7 +262,7 @@ public class ThreadPool implements Executor {
                 checkIfTaskFailed();
                 synchronized (lockObject) {
                     boolean isTaskDone = ThreadPool.this.waitTillCondition(
-                            (param) -> isDone() || isCancelled(), timeout, unit, lockObject);
+                            (_) -> isDone() || isCancelled(), timeout, unit, lockObject);
 
                     if (isCancelled()) {
                         throw new CancellationException();

@@ -38,14 +38,14 @@ public class Tasks {
 
         @SuppressWarnings("unchecked")
         @Override
-        public T call() throws Exception {
+        public T call() {
             return (T)MessageFormat.format("Task {0} is running", taskNumber);
         }
     }
 
     public static class ThreadNumberTask implements Callable<Integer> {
         @Override
-        public Integer call() throws Exception {
+        public Integer call() {
             return getThreadNumber();
         }
     }

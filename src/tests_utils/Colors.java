@@ -13,9 +13,5 @@ public enum Colors {
     Colors(String value) {
         this.value = value;
     }
-
-    public static String getColoredMessage(String message, Colors color) {
-        return color.value + message + RESET.value;
-    }
 }
 
