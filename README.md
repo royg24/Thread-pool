@@ -1,0 +1,158 @@
+# 🧵 ThreadPool
+
+A custom Java Thread Pool implementation that implements the standard `Executor` interface, featuring:
+
+- Task prioritization using a **Waitable Priority Queue**  
+- **Dynamic thread scaling** (increase/decrease worker count at runtime)  
+- **Pause & Resume** functionality  
+- **Graceful shutdown** with task completion waiting, implemented via the **Poison Pill** technique  
+- **Future** support for task results and cancellation  
+
+---
+
+## 📌 Features
+
+- **Custom Priority Queue**  
+  Tasks are stored in a `WaitablePQ` with multiple priority levels: `LOW`, `MEDIUM`, `HIGH`.
+
+- **Dynamic Thread Management**  
+  Increase or decrease worker threads while running.
+
+- **Pause & Resume Execution**  
+  Temporarily halt task execution and later resume without losing tasks.
+
+- **Graceful Shutdown with Poison Pill Technique**  
+  Special “poison pill” tasks are enqueued to signal threads to stop. When a thread dequeues one, it terminates cleanly after finishing current tasks, ensuring no new tasks start after shutdown.
+
+- **Future-based API**  
+  Submit tasks and retrieve results asynchronously via `Future`.
+
+---
+
+## Project Structure
+
+- 📁 thread pool/
+  - 📁 src/
+    - 📁 tests_utils/ `classes for the tests`
+      - 📄 Colors.java
+      - 📄 DequeueTester.java
+      - 📄 EnqueueTester.java
+      - 📄 Members.java
+      - 📄 Tasks.java
+      - 📄 Video.java
+    - 📁 thread_pool/ ` main thread pool source code`
+      - 📄 ThreadPool.java
+      - 📁 waitable_pq/
+        - 📄 WaitablePQ.java
+  - 📁 tests/ ` JUnit test classes`
+    - 📄 TestThreadPool.java
+    - 📄 TestWPQ.java
+
+---
+
+## API Overview
+
+### ThreadPool API
+
+- `ThreadPool(int numberOfThreads)`  
+  Creates a thread pool with the specified number of worker threads.
+
+- `void execute(Runnable command)`  *Legacy method from the Executor interface.*  
+  Submits a Runnable task with high priority for execution.
+
+- `<T> Future<T> submit(Runnable runnable, TasksPriority priority)`  
+  Submits a Runnable task with the given priority and returns a Future.
+
+- `<T> Future<T> submit(Runnable runnable, TasksPriority priority, T value)`  
+  Submits a Runnable task with the given priority and a result value.
+
+- `<T> Future<T> submit(Callable<T> callable, TasksPriority priority)`  
+  Submits a Callable task with the specified priority.
+
+- `<T> Future<T> submit(Callable<T> callable)`  
+  Submits a Callable task with medium priority.
+
+- `void setNumOfThreads(int numOfThreads)`  
+  Adjusts the number of worker threads dynamically.
+
+- `void pause()`  
+  Pauses the execution of tasks.
+
+- `void resume()`  
+  Resumes execution of paused tasks.
+
+- `void shutDown()`  
+  Initiates a graceful shutdown, stopping new tasks and finishing queued ones.
+
+- `boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException`  
+  Waits up to the specified timeout for all tasks to complete after shutdown.
+
+---
+
+### WaitablePQ API
+
+- `void enqueue(E element) throws InterruptedException`  
+  Adds an element to the priority queue, blocking if necessary.
+
+- `E dequeue() throws InterruptedException`  
+  Removes and returns the highest priority element, blocking if the queue is empty.
+
+- `boolean remove(E element) throws InterruptedException`  
+  Removes a specific element from the queue if present.
+
+---
+
+## UML Class Diagram
+
+### [View Class Diagram (PDF)](docs/Thread%20Pool%20Class%20Diagram.pdf)
+<img width="894" height="806" alt="image" src="https://github.com/user-attachments/assets/325daec0-b945-4ba7-b4f6-17007968996c" />
+
+---
+
+## Testing
+
+This project includes **JUnit tests** to verify the correctness of the thread pool and its components.
+
+- Test classes are located in the `tests/` directory.
+- Use your IDE or build tool (e.g., Maven, Gradle) to run the tests.
+
+### Example Test Classes
+
+- `TestThreadPool.java` — tests core thread pool functionality  
+- `TestWPQ.java` — tests the waitable priority queue behavior
+
+---
+
+## Usage Example
+
+```java
+import thread_pool.ThreadPool;
+import java.util.concurrent.Future;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        ThreadPool pool = new ThreadPool(4); // Start with 4 worker threads
+
+        // Submit a simple task
+        Future<String> result = pool.submit(() -> {
+            Thread.sleep(1000);
+            return "High priority task";
+        }, ThreadPool.TasksPriority.HIGH);
+
+        System.out.println(result.get()); // Wait for result
+
+        // Pause execution
+        pool.pause();
+
+        // Resume execution
+        pool.resume();
+
+        // Change number of threads
+        pool.setNumOfThreads(6);
+
+        // Shutdown gracefully (poison pills sent internally)
+        pool.shutDown();
+        pool.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
+    }
+}
+```
