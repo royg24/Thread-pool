@@ -54,51 +54,79 @@ A custom Java Thread Pool implementation that implements the standard `Executor`
 
 ### ThreadPool API
 
-- `ThreadPool(int numberOfThreads)`  
-  Creates a thread pool with the specified number of worker threads.
+```java
+ThreadPool(int numberOfThreads)
+```
+- Creates a thread pool with the specified number of worker threads.
 
-- `void execute(Runnable command)`  *Legacy method from the Executor interface.*  
-  Submits a Runnable task with high priority for execution.
+```java
+public void execute(Runnable command)  //Legacy method from the Executor interface.  
+```
+- Submits a Runnable task with high priority for execution.
 
-- `<T> Future<T> submit(Runnable runnable, TasksPriority priority)`  
-  Submits a Runnable task with the given priority and returns a Future.
+```java
+public <T> Future<T> submit(Runnable runnable, TasksPriority priority)
+``` 
+ - Submits a Runnable task with the given priority and returns a Future.
 
-- `<T> Future<T> submit(Runnable runnable, TasksPriority priority, T value)`  
-  Submits a Runnable task with the given priority and a result value.
+```java
+public <T> Future<T> submit(Runnable runnable, TasksPriority priority, T value)
+```
+ - Submits a Runnable task with the given priority and a result value.
 
-- `<T> Future<T> submit(Callable<T> callable, TasksPriority priority)`  
-  Submits a Callable task with the specified priority.
+```java
+public <T> Future<T> submit(Callable<T> callable, TasksPriority priority)
+```
+ - Submits a Callable task with the specified priority.
 
-- `<T> Future<T> submit(Callable<T> callable)`  
-  Submits a Callable task with medium priority.
+```java
+public <T> Future<T> submit(Callable<T> callable)`
+``` 
+- Submits a Callable task with medium priority.
 
-- `void setNumOfThreads(int numOfThreads)`  
-  Adjusts the number of worker threads dynamically.
+```java
+public void setNumOfThreads(int numOfThreads)
+```  
+ - Adjusts the number of worker threads dynamically.
 
-- `void pause()`  
-  Pauses the execution of tasks.
+```java
+public void pause()
+```  
+ - Pauses the execution of tasks.
 
-- `void resume()`  
-  Resumes execution of paused tasks.
+```java
+public void resume()
+```  
+ - Resumes execution of paused tasks.
 
-- `void shutDown()`  
-  Initiates a graceful shutdown, stopping new tasks and finishing queued ones.
+```java
+public void shutDown()
+```  
+ - Initiates a graceful shutdown, stopping new tasks and finishing queued ones.
 
-- `boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException`  
-  Waits up to the specified timeout for all tasks to complete after shutdown.
+```java
+public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException
+```  
+-  Waits up to the specified timeout for all tasks to complete after shutdown.
 
 ---
 
 ### WaitablePQ API
 
-- `void enqueue(E element) throws InterruptedException`  
-  Adds an element to the priority queue, blocking if necessary.
+```java
+public void enqueue(E element) throws InterruptedException
+```  
+ - Adds an element to the priority queue, blocking if necessary.
 
-- `E dequeue() throws InterruptedException`  
-  Removes and returns the highest priority element, blocking if the queue is empty.
+```java
+public E dequeue() throws InterruptedException
+```  
+ - Removes and returns the highest priority element, blocking if the queue is empty.
 
-- `boolean remove(E element) throws InterruptedException`  
-  Removes a specific element from the queue if present.
+```java
+public boolean remove(E element) throws InterruptedException
+```  
+ - Removes a specific element from the queue if present.
 
 ---
 
