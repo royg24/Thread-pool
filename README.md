@@ -6,11 +6,25 @@ A custom Java Thread Pool implementation that implements the standard `Executor`
 - **Dynamic thread scaling** (increase/decrease worker count at runtime)  
 - **Pause & Resume** functionality  
 - **Graceful shutdown** with task completion waiting, implemented via the **Poison Pill** technique  
-- **Future** support for task results and cancellation  
+- **Future** support for task results and cancellation
 
 ---
 
-## 📌 Features
+## Table of Contents
+
+- [Features](#features)  
+- [Project Structure](#project-structure)  
+- [API Overview](#api-overview)  
+  - [ThreadPool API](#threadpool-api)  
+  - [WaitablePQ API](#waitablepq-api)  
+- [UML Class Diagram](#uml-class-diagram)  
+- [Testing](#testing)  
+- [Usage Example](#usage-example)  
+- [Credits](#credits)  
+
+---
+
+## Features
 
 - **Custom Priority Queue**  
   Tasks are stored in a `WaitablePQ` with multiple priority levels: `LOW`, `MEDIUM`, `HIGH`.
@@ -33,18 +47,12 @@ A custom Java Thread Pool implementation that implements the standard `Executor`
 
 - 📁 thread pool/
   - 📁 src/
-    - 📁 tests_utils/ `classes for the tests`
-      - 📄 Colors.java
-      - 📄 DequeueTester.java
-      - 📄 EnqueueTester.java
-      - 📄 Members.java
-      - 📄 Tasks.java
-      - 📄 Video.java
-    - 📁 thread_pool/ ` main thread pool source code`
+    - 📁 tests_utils/ `helper classes for testing`
+    - 📁 thread_pool/ `main thread pool source code`
       - 📄 ThreadPool.java
       - 📁 waitable_pq/
         - 📄 WaitablePQ.java
-  - 📁 tests/ ` JUnit test classes`
+  - 📁 tests/ `JUnit test classes`
     - 📄 TestThreadPool.java
     - 📄 TestWPQ.java
 
@@ -178,9 +186,16 @@ public class Main {
         // Change number of threads
         pool.setNumOfThreads(6);
 
-        // Shutdown gracefully (poison pills sent internally)
+        // Shutdown gracefully
         pool.shutDown();
         pool.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
     }
 }
 ```
+
+---
+
+## Credits
+
+- Developed by **Roy Goldhar**  
+- Inspired by Java’s standard `Executor` framework.
