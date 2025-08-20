@@ -15,7 +15,8 @@ A custom Java Thread Pool implementation that implements the standard `Executor`
 - [Features](#features)  
 - [Project Structure](#project-structure)  
 - [API Overview](#api-overview)  
-  - [ThreadPool API](#threadpool-api)  
+  - [ThreadPool API](#threadpool-api)
+  - [Future API](#future-api)  
   - [WaitablePQ API](#waitablepq-api)  
 - [UML Class Diagram](#uml-class-diagram)  
 - [Testing](#testing)  
@@ -88,7 +89,7 @@ public <T> Future<T> submit(Callable<T> callable, TasksPriority priority)
  - Submits a Callable task with the specified priority.
 
 ```java
-public <T> Future<T> submit(Callable<T> callable)`
+public <T> Future<T> submit(Callable<T> callable)
 ``` 
 - Submits a Callable task with medium priority.
 
@@ -119,12 +120,46 @@ public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedE
 
 ---
 
+### Future API
+A custom implementation of the `java.util.concurrent.Future<T>` interface, returned by `ThreadPool.submit(...)`.  
+Supports asynchronous result retrieval, cancellation, and completion checks.
+
+```java
+public T get()
+```
+- Blocks the calling thread until the task is finished or cancelled, and returns the task’s result.
+- Throws `CancellationException` if the task was cancelled.
+
+```java
+public T get(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException
+```
+- Blocks the calling thread until the task is finished, cancelled, or the specified timeout is reached, and returns the task’s result.
+- Throws `CancellationException` if the task was cancelled.
+- Throws `TimeoutException` if the timeout is exceeded before completion.
+
+```java
+public boolean cancel(boolean mayInterruptIfRunning) //boolean parameter is ignored and there from legacy reasons.
+```
+- Attempts to cancel the task, can only cancel if the task has not started yet.
+
+```java
+public boolean isCancelled()
+```
+- Chceks if the task was cancelled.
+
+```java
+public boolean isDone()
+```
+- Checks if the task has completed successfully.
+---
+
 ### WaitablePQ API
 
 ```java
 public void enqueue(E element) throws InterruptedException
 ```  
  - Adds an element to the priority queue, blocking if necessary.
+ - Throws `InterruptedException` if the calling thread is interrupted while waiting.
 
 ```java
 public E dequeue() throws InterruptedException
